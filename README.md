@@ -108,33 +108,6 @@ VERT/
 
 ---
 
-## 🌐 API Reference
-
-### Main board — `http://vert.local` (port 80)
-| Endpoint | Method | Description |
-|---|---|---|
-| `/data` | GET | Full sensor + state snapshot (soil, pH, temp, humidity, door, pump, bulb, thresholds) |
-| `/setThresholds` | POST | Save farmer-configured min/max thresholds |
-| `/pump?state=on\|off` | GET | Manual pump control (only when auto-irrigation is off) |
-| `/bulb?state=on\|off` | GET | Grow light on/off |
-| `/mode?auto=1\|0` | GET | Toggle automatic irrigation |
-| `/door?action=open\|close` | GET | Move the door |
-
-### Camera board — `http://vert-cam.local` (port 80 + 81)
-| Endpoint | Method | Description |
-|---|---|---|
-| `:81/stream` | GET | MJPEG live video (`multipart/x-mixed-replace`) |
-| `/capture` | GET | Single JPEG snapshot |
-| `/status` | GET | Latest AI reading: `{"ok":true,"detected":true,"label":"healthy","confidence":0.93,"ageMs":1200}` |
-
-`detected` is `false` whenever the top label's confidence is below the
-classifier's confidence threshold — i.e. nothing was confidently recognized
-in frame (empty view, blurry, plant out of shot). The dashboard skips
-charting a reading when `detected` is false rather than plotting a
-low-confidence guess.
-
----
-
 ## 🚀 Getting Started
 
 ### 1. Main controller (`VERT_ESP32`)

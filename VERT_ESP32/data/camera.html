@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V.E.R.T. &middot; Camera &amp; AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-mark">
+        <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+          <circle cx="32" cy="11" r="1.6" fill="currentColor"/>
+          <path d="M28 8 A5 5 0 0 1 36 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M24.5 5 A10 10 0 0 1 39.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M32 14 L54 30 V58 H10 V30 Z" fill="none" stroke="currentColor" stroke-width="3"/>
+          <ellipse cx="32" cy="50" rx="9" ry="2.5" fill="currentColor" opacity="0.25"/>
+          <path d="M32 30 v18 M32 30 c-8 -2 -12 -8 -12 -8 c8 -2 12 8 12 8 c0 0 4 -10 12 -8 c0 0 -4 6 -12 8" fill="currentColor" stroke="none"/>
+          <path d="M54 40 L61 35" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="61" cy="35" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M61 37 L61 45" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M57 49 L61 45 L65 49 M57 45.5 L61 49.5 L65 45.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>V.E.R.T.</h1>
+        <p>Versatile Eco-farming Robotic Technology</p>
+      </div>
+    </div>
+    <div id="camConnIndicator" class="conn-badge conn-unknown">Connecting&hellip;</div>
+  </header>
+
+  <nav class="tabbar">
+    <a href="index.html" class="tab">Dashboard</a>
+    <a href="camera.html" class="tab tab-active">Camera &amp; AI</a>
+  </nav>
+
+  <main>
+    <section class="camera-grid">
+
+      <div class="card camera-card cell-video">
+        <div class="card-header-row">
+          <h2>Live Feed</h2>
+          <div class="video-controls">
+            <button type="button" id="streamToggleBtn" class="icon-btn icon-btn-play" onclick="toggleStream()" aria-pressed="false" title="Start live stream">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
+              <span>Start</span>
+            </button>
+            <button type="button" class="icon-btn icon-btn-ghost" onclick="toggleCamSettings()" title="Camera connection settings" aria-expanded="false" id="camSettingsBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm8.4-3.5a7.9 7.9 0 0 0-.14-1.45l1.9-1.48a.5.5 0 0 0 .12-.64l-1.8-3.12a.5.5 0 0 0-.6-.22l-2.24.9a7.9 7.9 0 0 0-1.26-.73l-.34-2.38a.5.5 0 0 0-.5-.43h-3.6a.5.5 0 0 0-.5.43l-.34 2.38c-.45.19-.87.44-1.26.73l-2.24-.9a.5.5 0 0 0-.6.22L4.7 8.43a.5.5 0 0 0 .12.64l1.9 1.48A7.9 7.9 0 0 0 6.6 12c0 .49.05.97.14 1.45l-1.9 1.48a.5.5 0 0 0-.12.64l1.8 3.12c.13.22.4.31.6.22l2.24-.9c.39.29.81.54 1.26.73l.34 2.38c.05.25.26.43.5.43h3.6c.24 0 .45-.18.5-.43l.34-2.38c.45-.19.87-.44 1.26-.73l2.24.9c.2.09.47 0 .6-.22l1.8-3.12a.5.5 0 0 0-.12-.64l-1.9-1.48c.09-.48.14-.96.14-1.45z" fill="currentColor"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="video-frame" id="videoFrame">
+          <img id="camStream" alt="Camera stream" src="">
+          <div id="videoOverlay" class="video-overlay">Stream is off &mdash; press Start to watch</div>
+          <div class="live-badge" id="liveBadge"><span class="live-dot"></span>LIVE</div>
+        </div>
+
+        <div class="cam-settings-panel" id="camSettingsPanel" hidden>
+          <label for="camHostInput">Camera address</label>
+          <div class="cam-host-row">
+            <input type="text" id="camHostInput" placeholder="http://vert-cam.local or http://192.168.1.45">
+            <button type="button" class="btn btn-outline" onclick="saveCamHost()">Save</button>
+            <span id="camHostStatus" class="save-status"></span>
+          </div>
+          <p class="hint">If <code>.local</code> addresses won't resolve on this device, use the camera's IP address instead (shown in its Serial Monitor at boot).</p>
+        </div>
+      </div>
+
+      <div class="card cell-prediction">
+        <h2>Plant Health</h2>
+        <div class="status-row">
+          <span id="predictionLabel" class="pill pill-neutral">--</span>
+        </div>
+        <div class="confidence-wrap">
+          <div class="confidence-label">
+            <span>Confidence</span>
+            <span id="confidenceValue">--%</span>
+          </div>
+          <div class="confidence-track">
+            <div id="confidenceBar" class="confidence-fill" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="sublabel" id="predictionAge">no prediction yet</div>
+      </div>
+
+      <div class="card cell-chart">
+        <h2>Health History</h2>
+        <div class="chart-frame">
+          <canvas id="healthChart" width="1000" height="220"></canvas>
+        </div>
+        <div class="chart-legend" id="chartLegend"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>V.E.R.T. control panel &middot; camera served from its own ESP32 on your local network</p>
+  </footer>
+
+<script src="camera.js"></script>
+</body>
+</html>

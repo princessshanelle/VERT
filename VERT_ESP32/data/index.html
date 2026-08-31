@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V.E.R.T. Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-mark">
+        <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+          <circle cx="32" cy="11" r="1.6" fill="currentColor"/>
+          <path d="M28 8 A5 5 0 0 1 36 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M24.5 5 A10 10 0 0 1 39.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M32 14 L54 30 V58 H10 V30 Z" fill="none" stroke="currentColor" stroke-width="3"/>
+          <ellipse cx="32" cy="50" rx="9" ry="2.5" fill="currentColor" opacity="0.25"/>
+          <path d="M32 30 v18 M32 30 c-8 -2 -12 -8 -12 -8 c8 -2 12 8 12 8 c0 0 4 -10 12 -8 c0 0 -4 6 -12 8" fill="currentColor" stroke="none"/>
+          <path d="M54 40 L61 35" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="61" cy="35" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M61 37 L61 45" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M57 49 L61 45 L65 49 M57 45.5 L61 49.5 L65 45.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>V.E.R.T.</h1>
+        <p>Versatile Eco-farming Robotic Technology</p>
+      </div>
+    </div>
+    <div id="connIndicator" class="conn-badge conn-unknown">Connecting&hellip;</div>
+  </header>
+
+  <nav class="tabbar">
+    <a href="index.html" class="tab tab-active">Dashboard</a>
+    <a href="camera.html" class="tab">Camera &amp; AI</a>
+  </nav>
+
+  <main>
+    <section class="grid">
+
+      <div class="card">
+        <h2>Soil Moisture</h2>
+        <div class="big-stat" id="soilAvg">--%</div>
+        <div class="sublabel">average across 5 sensors</div>
+        <div class="mini-grid" id="soilMiniGrid"></div>
+      </div>
+
+      <div class="card">
+        <h2>pH</h2>
+        <div class="two-stat">
+          <div><span id="ph1">--</span><small>sensor 1</small></div>
+          <div><span id="ph2">--</span><small>sensor 2</small></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Climate</h2>
+        <div class="two-stat">
+          <div><span id="temp">--&deg;C</span><small>temperature</small></div>
+          <div><span id="humidity">--%</span><small>humidity</small></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Door</h2>
+        <div class="status-row">
+          <span id="doorState" class="pill pill-neutral">unknown</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="sendDoor('open')">Open</button>
+          <button class="btn btn-outline" onclick="sendDoor('close')">Close</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Irrigation Pump</h2>
+        <div class="status-row">
+          <span id="pumpState" class="pill pill-neutral">off</span>
+        </div>
+        <label class="switch-row">
+          <span>Automatic mode</span>
+          <label class="switch">
+            <input type="checkbox" id="autoToggle" onchange="toggleAuto()">
+            <span class="slider"></span>
+          </label>
+        </label>
+        <div class="btn-row" id="manualPumpBtns">
+          <button class="btn btn-outline" onclick="sendPump('on')">Turn On</button>
+          <button class="btn btn-outline" onclick="sendPump('off')">Turn Off</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Grow Light</h2>
+        <div class="status-row">
+          <span id="bulbState" class="pill pill-neutral">off</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="sendBulb('on')">Turn On</button>
+          <button class="btn btn-outline" onclick="sendBulb('off')">Turn Off</button>
+        </div>
+      </div>
+
+      <div class="card card-wide">
+        <h2>Farmer Preferences</h2>
+        <p class="hint">Set the ideal range for your crop. Irrigation switches on automatically once soil moisture drops below the minimum, and switches off once it rises back above the maximum.</p>
+        <form id="thresholdForm" onsubmit="saveThresholds(event)">
+          <div class="threshold-grid">
+            <div class="field-pair">
+              <label>Soil moisture min (%)</label>
+              <input type="number" step="1" id="soilMin" required>
+            </div>
+            <div class="field-pair">
+              <label>Soil moisture max (%)</label>
+              <input type="number" step="1" id="soilMax" required>
+            </div>
+            <div class="field-pair">
+              <label>Temperature min (&deg;C)</label>
+              <input type="number" step="0.5" id="tempMin" required>
+            </div>
+            <div class="field-pair">
+              <label>Temperature max (&deg;C)</label>
+              <input type="number" step="0.5" id="tempMax" required>
+            </div>
+            <div class="field-pair">
+              <label>pH min</label>
+              <input type="number" step="0.1" id="phMin" required>
+            </div>
+            <div class="field-pair">
+              <label>pH max</label>
+              <input type="number" step="0.1" id="phMax" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Preferences</button>
+          <span id="saveStatus" class="save-status"></span>
+        </form>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>V.E.R.T. control panel &middot; served from the ESP32 on your local network</p>
+  </footer>
+
+<script src="script.js"></script>
+</body>
+</html>
